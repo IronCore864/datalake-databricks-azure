@@ -1,0 +1,17 @@
+{
+  "name": "test model",
+  "new_cluster": {
+    "spark_version": "4.0.x-scala2.11",
+    "node_type_id": "Standard_D3_v2",
+    "num_workers": 2
+  },
+  "libraries": [
+    {
+      "jar": "dbfs:/tmp/tiexin.jar"
+    }
+  ],
+  "spark_jar_task": {
+    "main_class_name": "io.techhublisbon.stream_collector.Dataflow",
+    "parameters": "'--option','nam_gps','--env','prod','--targetFilePath','dbfs:/mnt/techhublisbon/eventHubs','--targetAdlFilePath','adl://daimlertdhubdl01.azuredatalakestore.net/datalake','--graphiteHost','137.117.154.8'"
+  }
+}

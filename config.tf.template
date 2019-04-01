@@ -1,0 +1,7 @@
+provider "azurerm" {
+  subscription_id = "ce78d9c3-d641-420b-9082-2ceb065fd909"
+  client_id       = ""
+  client_secret   = ""
+  tenant_id       = ""
+  version         = "~> 1.21"
+}

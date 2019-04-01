@@ -1,0 +1,45 @@
+#!/bin/bash
+
+echo "Your settings:"
+echo
+echo "databricks_datalake_rg_name: {{ databricks_datalake_rg_name }}"
+echo "databricks_workspace_name: {{ databricks_workspace_name }}"
+echo "databricks_pricing_tier: {{ databricks_pricing_tier }}"
+echo "databricks_app_name: {{ databricks_app_name }}"
+echo "datalake_account_name: {{ datalake_account_name }}"
+echo "datalake_dir: {{ datalake_dir }}"
+echo
+
+read -p "Continue? (y/n) " -n 1 -r
+echo
+if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+    echo "Abort!"
+    exit -1
+fi
+echo
+
+starttime=`date +%s`
+
+echo "Checking if databricks is already created ..."
+if az resource list --name {{ databricks_workspace_name }} | grep "{{ databricks_workspace_name }}" >/dev/null 2>&1; then
+    echo "Databricks already exists! Skip databricks creation."
+else
+    echo "Databricks does not exist."
+    echo "Start deploying databricks ..."
+    az group deployment create --name DatabricksDeploy \
+        --resource-group {{ databricks_datalake_rg_name }} --template-file databricks.json --parameters @databricks-parameters.json
+    echo "Granting access for datalake root dir to databricks ..."
+    az dls fs access set-entry --account {{ datalake_account_name }} \
+        --path / --acl-spec default:group::rwx,group:{{ databricks_app_name }}:rwx,default:user:{{ databricks_app_name }}:rwx,user:{{ databricks_app_name }}:rwx
+    echo "Granting access for datalake working dir to databricks ..."
+    az dls fs access set-entry --account {{ datalake_account_name }} \
+        --path {{ datalake_dir }} --acl-spec default:group:{{ databricks_app_name }}:rwx,group:{{ databricks_app_name }}:rwx,default:user:{{ databricks_app_name }}:rwx,user:{{ databricks_app_name }}:rwx
+    echo "Databricks deploy done!"
+fi
+echo
+
+echo "Deploy all done! Congrats! Check README.md for further info."
+
+endtime=`date +%s`
+runtime=$((endtime-starttime))
+echo "It took $runtime seconds".

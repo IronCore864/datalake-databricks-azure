@@ -1,0 +1,27 @@
+[DEV]
+
+databricks_datalake_rg_name = dev-databricks-datalake
+
+# should be unique, as it's part of URL
+# should only contain lowercase letters and numbers
+datalake_account_name = datalaketdh01dev
+datalake_dir = /datalake
+
+databricks_workspace_name = databricks-dev
+databricks_pricing_tier = standard
+databricks_app_name = databricks-dev
+
+[PROD]
+
+databricks_datalake_rg_name = databricks-datalake
+
+# should be unique, as it's part of URL
+# should only contain lowercase letters and numbers
+datalake_account_name = datalaketdh01prod
+datalake_dir = /datalake
+
+databricks_workspace_name = databricks-prod
+databricks_pricing_tier = standard
+databricks_app_name = databricks-prod
+
+

@@ -1,0 +1,40 @@
+#!/bin/bash
+
+echo "Your settings:"
+echo
+echo "databricks_datalake_rg_name: {{ databricks_datalake_rg_name }}"
+echo "datalake_account_name: {{ datalake_account_name }}"
+echo "datalake_dir: {{ datalake_dir }}"
+echo
+
+read -p "Continue? (y/n) " -n 1 -r
+echo
+if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+    echo "Abort!"
+    exit -1
+fi
+echo
+
+starttime=`date +%s`
+
+echo "Checking if datalake account is already created ..."
+if az dls account show --account {{ datalake_account_name }} >/dev/null 2>&1; then
+    echo "Datalake account already exists! Skip datalake creation."
+else
+    echo "Datalake account does not exist."
+    echo "Start deploying datalake ..."
+    echo "Creating datalake account ..."
+    az dls account create --account {{ datalake_account_name }} --resource-group {{ databricks_datalake_rg_name }}
+    echo "Creating datalake dir ..."
+    az dls fs create --account {{ datalake_account_name }} --path {{ datalake_dir }} --folder
+    echo "Datalake deploy done!"
+    echo "======"
+    echo
+fi
+echo
+
+echo "Deploy all done! Congrats! Check README.md for further info."
+
+endtime=`date +%s`
+runtime=$((endtime-starttime))
+echo "It took $runtime seconds".
